@@ -119,9 +119,9 @@ class GstOverlay(base.VideoOverlay):
         if self.renderer.get_window_handle():
             pass
         elif IS_WINDOWS:
-            # TODO test in windows
-            # get_property('window')
             self.renderer.set_window_handle(base.get_window_handle(self.movie_zone.get_window()))
+        elif IS_MAC_OS:
+            self.renderer.set_window_handle(base.get_window_nsview(self.movie_zone.get_window()))
         else:
             self.renderer.set_window_handle(self.movie_zone.get_window().get_xid())
 
