@@ -72,7 +72,7 @@ class Pointer(object):
         default = 'pointer_' + config.get('presenter', 'pointer')
         self.load_pointer(default)
 
-        for radio_name in ['pointer_red', 'pointer_blue', 'pointer_green', 'pointer_none']:
+        for radio_name in ['pointer_red', 'pointer_blue', 'pointer_green']:
             radio = builder.get_object(radio_name)
             radio.set_name(radio_name)
 
@@ -156,6 +156,7 @@ class Pointer(object):
         ctrl_pressed = event.get_state() & Gdk.ModifierType.CONTROL_MASK
 
         if ctrl_pressed and event.type == Gdk.EventType.BUTTON_PRESS:
+            print('Pointer on')
             self.show_pointer = POINTER_SHOW
             extras.Cursor.set_cursor(widget, 'invisible')
 
@@ -163,6 +164,7 @@ class Pointer(object):
             return self.track_pointer(widget, event)
 
         elif self.show_pointer == POINTER_SHOW and event.type == Gdk.EventType.BUTTON_RELEASE:
+            print('Pointer off')
             self.show_pointer = POINTER_HIDE
             extras.Cursor.set_cursor(widget, 'parent')
             self.redraw_current_slide()

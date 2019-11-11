@@ -219,13 +219,46 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
+                              <object class="GtkRadioMenuItem" id="pointermode_continous">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">_Continous</property>
+                                <property name="use_underline">True</property>
+                                <property name="draw_as_radio">True</property>
+                                <property name="group">pointermode_continous</property>
+                                <signal name="toggled" handler="laser.change_pointer" swapped="no"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkRadioMenuItem" id="pointermode_manual">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">_Manual</property>
+                                <property name="use_underline">True</property>
+                                <property name="draw_as_radio">True</property>
+                                <property name="group">pointermode_continous</property>
+                                <signal name="toggled" handler="laser.change_pointer" swapped="no"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkRadioMenuItem" id="pointermode_none">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">_Disabled</property>
+                                <property name="use_underline">True</property>
+                                <property name="draw_as_radio">True</property>
+                                <property name="group">pointermode_continous</property>
+                                <signal name="toggled" handler="laser.change_pointer" swapped="no"/>
+                              </object>
+                            </child>
+                            <child>
                               <object class="GtkRadioMenuItem" id="pointer_red">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="label" translatable="yes">_Red</property>
                                 <property name="use_underline">True</property>
                                 <property name="draw_as_radio">True</property>
-                                <property name="group">pointer_none</property>
+                                <property name="group">pointer_red</property>
                                 <signal name="toggled" handler="laser.change_pointer" swapped="no"/>
                               </object>
                             </child>
@@ -236,7 +269,7 @@
                                 <property name="label" translatable="yes">_Green</property>
                                 <property name="use_underline">True</property>
                                 <property name="draw_as_radio">True</property>
-                                <property name="group">pointer_none</property>
+                                <property name="group">pointer_red</property>
                                 <signal name="toggled" handler="laser.change_pointer" swapped="no"/>
                               </object>
                             </child>
@@ -247,17 +280,7 @@
                                 <property name="label" translatable="yes">_Blue</property>
                                 <property name="use_underline">True</property>
                                 <property name="draw_as_radio">True</property>
-                                <property name="group">pointer_none</property>
-                                <signal name="toggled" handler="laser.change_pointer" swapped="no"/>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkRadioMenuItem" id="pointer_none">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">_Disabled</property>
-                                <property name="use_underline">True</property>
-                                <property name="draw_as_radio">True</property>
+                                <property name="group">pointer_red</property>
                                 <signal name="toggled" handler="laser.change_pointer" swapped="no"/>
                               </object>
                             </child>
