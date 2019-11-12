@@ -82,19 +82,22 @@ class Pointer(object):
 
         self.redraw_current_slide = builder.get_callback_handler('redraw_current_slide')
 
-        default = 'pointer_' + config.get('presenter', 'pointer')
-        self.load_pointer(default)
-
-        for radio_name in ['pointer_red', 'pointer_blue', 'pointer_green']:
-            radio = builder.get_object(radio_name)
-            radio.set_name(radio_name)
-
-            radio.set_active(radio_name == default)
+        default_mode = 'pointermode_' + config.get('presenter', 'pointer_mode')
 
         for radio_name in ['pointermode_continous', 'pointermode_manual', 'pointermode_none']:
             radio = builder.get_object(radio_name)
             radio.set_name(radio_name)
 
+            radio.set_active(radio_name == default_mode)
+
+        default_color = 'pointer_' + config.get('presenter', 'pointer')
+        self.load_pointer(default_color)
+
+        for radio_name in ['pointer_red', 'pointer_blue', 'pointer_green']:
+            radio = builder.get_object(radio_name)
+            radio.set_name(radio_name)
+
+            radio.set_active(radio_name == default_color)
 
 
     def load_pointer(self, name):
@@ -131,6 +134,8 @@ class Pointer(object):
         if widget.get_active():
             assert(widget.get_name().startswith('pointermode_'))
             mode = widget.get_name()[len('pointermode_'):]
+            self.config.set('presenter', 'pointer_mode', mode)
+
             if mode == 'continous':
                 self.show_pointer = POINTER_SHOW
                 self.pointer_mode = POINTERMODE_CONTINEOUS
