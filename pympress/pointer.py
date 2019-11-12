@@ -63,6 +63,7 @@ class Pointer(object):
     config = None
     #: :class:`~Gtk.Box` in the Presenter window, used to reliably set cursors.
     p_da_cur = None
+    c_frame = None
 
 
     #: callback, to be connected to :func:`~pympress.ui.UI.redraw_current_slide`
@@ -145,8 +146,10 @@ class Pointer(object):
         if self.p_da_cur.get_window():
             if self.pointer_mode == POINTERMODE_CONTINEOUS:
                 extras.Cursor.set_cursor(self.p_da_cur, 'invisible')
+                extras.Cursor.set_cursor(self.c_frame, 'invisible')
             else:
                 extras.Cursor.set_cursor(self.p_da_cur, 'parent')
+                extras.Cursor.set_cursor(self.c_frame, 'parent')
 
             self.redraw_current_slide()
 
