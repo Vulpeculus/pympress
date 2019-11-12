@@ -252,6 +252,12 @@
                               </object>
                             </child>
                             <child>
+                              <object class="GtkSeparatorMenuItem" id="pointer_separator">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                              </object>
+                            </child>
+                            <child>
                               <object class="GtkRadioMenuItem" id="pointer_red">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
