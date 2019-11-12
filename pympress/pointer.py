@@ -41,8 +41,8 @@ POINTER_HIDE = 0
 #: Draw the pointer on the current slide
 POINTER_SHOW = 1
 
-#: Pointer switched on contineously
-POINTERMODE_CONTINEOUS = 1
+#: Pointer switched on continuously
+POINTERMODE_CONTINUOUS = 1
 #: Pointer switched on only manual
 POINTERMODE_MANUAL = 0
 #: Pointer never switched on
@@ -137,12 +137,12 @@ class Pointer(object):
         """ Activate the pointer as given by mode
 
         Args:
-            mode (`str`): Name of the mode to activate (contineous|manual|none)
+            mode (`str`): Name of the mode to activate (continuous|manual|none)
         """
         # Set internal variables, unless called without mode (from ui, after windows have been mapped)
         if mode == 'continous':
             self.show_pointer = POINTER_SHOW
-            self.pointer_mode = POINTERMODE_CONTINEOUS
+            self.pointer_mode = POINTERMODE_CONTINUOUS
         elif mode == 'manual':
             self.show_pointer = POINTER_HIDE
             self.pointer_mode = POINTERMODE_MANUAL
@@ -152,7 +152,7 @@ class Pointer(object):
 
         # Set mouse pointer on/off, if windows are already mapped
         if self.p_da_cur.get_window():
-            if self.pointer_mode == POINTERMODE_CONTINEOUS:
+            if self.pointer_mode == POINTERMODE_CONTINUOUS:
                 extras.Cursor.set_cursor(self.p_da_cur, 'invisible')
                 extras.Cursor.set_cursor(self.c_frame, 'invisible')
             else:
@@ -210,6 +210,27 @@ class Pointer(object):
         else:
             return False
 
+    def track_enter_leave(self, widget, event):
+        """ Switches pointer off/on in continuous mode on leave/enter slides
+
+        Args:
+            widget (:class:`~Gtk.Widget`):  the widget which has received the event.
+            event (:class:`~Gdk.Event`):  the GTK event.
+
+        Returns:
+            `bool`: whether the event was consumed
+        """
+        if self.pointer_mode != POINTERMODE_CONTINUOUS:
+            return False
+
+        if event.type == Gdk.EventType.ENTER_NOTIFY:
+            self.show_pointer = POINTER_SHOW
+        elif event.type == Gdk.EventType.LEAVE_NOTIFY:
+            self.show_pointer = POINTER_HIDE
+
+        self.redraw_current_slide()
+        return True
+
 
     def toggle_pointer(self, widget, event):
         """ Track events defining when the laser is pointing.
@@ -224,7 +245,7 @@ class Pointer(object):
         if self.pointer_mode == POINTERMODE_DISABLED:
             return False
 
-        if self.pointer_mode == POINTERMODE_CONTINEOUS:
+        if self.pointer_mode == POINTERMODE_CONTINUOUS:
             return False
 
         ctrl_pressed = event.get_state() & Gdk.ModifierType.CONTROL_MASK
