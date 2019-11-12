@@ -61,9 +61,12 @@ class Pointer(object):
     pointer_mode = POINTERMODE_MANUAL
     #: A reference to the UI's :class:`~pympress.config.Config`, to update the pointer preference
     config = None
-    #: :class:`~Gtk.Box` in the Presenter window, used to reliably set cursors.
+    #: :class:`~Gtk.DrawingArea` Slide in the Presenter window, used to reliably set cursors.
     p_da_cur = None
-    c_frame = None
+    #: :class:`~Gtk.DrawingArea` Slide in the Contents window, used to reliably set cursors.
+    c_da     = None
+    #: :class:`~Gtk.AspectFrame` Frame of the Contents window, used to reliably set cursors.
+    c_frame  = None
 
 
     #: callback, to be connected to :func:`~pympress.ui.UI.redraw_current_slide`
@@ -160,6 +163,13 @@ class Pointer(object):
                 extras.Cursor.set_cursor(self.c_frame, 'parent')
 
             self.redraw_current_slide()
+            # print(Gdk.get_default_root_window().get_pointer())
+            # print(self.p_da_cur.get_window().get_origin())
+            # print(self.p_da_cur.get_window().get_geometry())
+            # print(self.p_da_cur.get_window().get_pointer())
+            # print(self.p_da_cur.get_allocated_width(), self.p_da_cur.get_allocated_height())
+            # print(self.p_da_cur.get_window().get_frame_extents())
+
 
 
     def change_pointermode(self, widget):
@@ -211,7 +221,10 @@ class Pointer(object):
             return False
 
     def track_enter_leave(self, widget, event):
-        """ Switches pointer off/on in continuous mode on leave/enter slides
+        """ Activates pointer in contuous mode on startup
+
+        Shows the laser pointer at startup only, if the mouse pointer
+        is already in one of the current slides (presenter or contents)
 
         Args:
             widget (:class:`~Gtk.Widget`):  the widget which has received the event.
@@ -225,11 +238,43 @@ class Pointer(object):
 
         if event.type == Gdk.EventType.ENTER_NOTIFY:
             self.show_pointer = POINTER_SHOW
+            extras.Cursor.set_cursor(self.p_da_cur, 'invisible')
+            extras.Cursor.set_cursor(self.c_frame, 'invisible')
         elif event.type == Gdk.EventType.LEAVE_NOTIFY:
             self.show_pointer = POINTER_HIDE
 
         self.redraw_current_slide()
         return True
+
+
+    def track_visibility(self, widget, event):
+        """ Switches pointer off/on in continuous mode on leave/enter slides
+
+        Args:
+            widget (:class:`~Gtk.Widget`):  the widget which has received the event.
+            event (:class:`~Gdk.Event`):  the GTK event.
+
+        Returns:
+            `bool`: whether the event was consumed
+        """
+        if self.pointer_mode != POINTERMODE_CONTINUOUS:
+            return False
+
+        pointer_is_in_slide = False
+        for widget in [self.p_da_cur, self.c_da]:
+            ww, wh = widget.get_allocated_width(), widget.get_allocated_height()
+            if ww==1 and wh==1:
+                return False
+            pointer_coordinates = widget.get_window().get_pointer();
+            if (     pointer_coordinates.x > 0 and pointer_coordinates.x < ww
+                 and pointer_coordinates.y > 0 and pointer_coordinates.y < wh):
+               # Switch laser on
+               pointer_is_in_slide = True
+
+        if not pointer_is_in_slide:
+            self.show_pointer = POINTER_HIDE
+            self.redraw_current_slide()
+
 
 
     def toggle_pointer(self, widget, event):

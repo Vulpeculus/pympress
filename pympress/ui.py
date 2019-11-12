@@ -997,6 +997,33 @@ class UI(builder.Builder):
             return False
 
 
+    def track_visibility(self, widget, event):
+        """ Trackes enter/leave events
+        
+        Handles events when the mouse pointer enter/leaves a slide
+
+        Args:
+            widget (:class:`~Gtk.Widget`):  the widget that received the mouse motion
+            event (:class:`~Gdk.Event`):  the GTK event containing the mouse position
+
+        Returns:
+            `bool`: whether the event was consumed
+        """
+        if widget not in [self.c_da, self.p_da_cur]:
+            return False
+        # print('RW P', Gdk.get_default_root_window().get_pointer())
+        # print('get_origin', self.p_da_cur.get_window().get_origin())
+        # print('get_geometry', self.p_da_cur.get_window().get_geometry())
+        # print('get_pointer', self.p_da_cur.get_window().get_pointer())
+        # print('get_w_h', self.p_da_cur.get_allocated_width(), self.p_da_cur.get_allocated_height())
+        # print('get_frame', self.p_da_cur.get_window().get_frame_extents())
+
+        if self.laser.track_visibility(widget, event):
+            return True
+        else:
+            return False
+
+
     def track_enter_leave(self, widget, event):
         """ Trackes enter/leave events
         
