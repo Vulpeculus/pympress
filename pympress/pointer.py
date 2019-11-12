@@ -123,10 +123,20 @@ class Pointer(object):
         print( widget )
         if widget.get_active():
             assert(widget.get_name().startswith('pointermode_'))
-            if widget.get_name() == 'pointermode_continous':
+            mode = widget.get_name()[len('pointermode_'):]
+            if mode == 'continous':
                 self.show_pointer = POINTER_SHOW
-                extras.Cursor.set_cursor(self.p_central, cursor_name='invisible')
-                self.redraw_current_slide()
+                extras.Cursor.set_cursor(self.p_central, 'invisible')
+
+            elif mode == 'manual':
+                self.show_pointer = POINTER_HIDE
+                extras.Cursor.set_cursor(self.p_central, 'parent')
+
+            elif mode == 'none':
+                self.show_pointer = POINTER_OFF
+                extras.Cursor.set_cursor(self.p_central, 'parent')
+
+            self.redraw_current_slide()
 
 
     def render_pointer(self, cairo_context, ww, wh):
