@@ -230,6 +230,7 @@ class UI(builder.Builder):
         self.next_button.set_visible(self.show_bigbuttons)
         self.highlight_button.set_visible(self.show_bigbuttons)
         self.p_frame_annot.set_visible(self.show_annotations)
+        self.laser.activate_pointermode()
 
 
     def load_icons(self):

@@ -57,7 +57,7 @@ class Pointer(object):
     pointer_pos = (.5, .5)
     #: `bool` indicating whether we should show the pointer
     show_pointer = POINTER_HIDE
-    #: `bool` indicating the pointer mode (contineous, manual, disabled)
+    #: `bool` indicating the pointer mode 
     pointer_mode = POINTERMODE_MANUAL
     #: A reference to the UI's :class:`~pympress.config.Config`, to update the pointer preference
     config = None
@@ -82,13 +82,14 @@ class Pointer(object):
 
         self.redraw_current_slide = builder.get_callback_handler('redraw_current_slide')
 
-        default_mode = 'pointermode_' + config.get('presenter', 'pointer_mode')
+        default_mode = config.get('presenter', 'pointer_mode')
+        self.activate_pointermode(default_mode)
 
         for radio_name in ['pointermode_continous', 'pointermode_manual', 'pointermode_none']:
             radio = builder.get_object(radio_name)
             radio.set_name(radio_name)
 
-            radio.set_active(radio_name == default_mode)
+            radio.set_active(radio_name == 'pointermode_' + default_mode)
 
         default_color = 'pointer_' + config.get('presenter', 'pointer')
         self.load_pointer(default_color)
@@ -123,6 +124,32 @@ class Pointer(object):
             self.load_pointer(widget.get_name())
             self.config.set('presenter', 'pointer', widget.get_name()[len('pointer_'):])
 
+    def activate_pointermode(self, mode=None):
+        """ Activate the pointer as given by mode
+
+        Args:
+            mode (`str`): Name of the mode to activate (contineous|manual|disabled)
+        """
+        # Set internal variables, unless called without mode (from ui, after windows have been mapped)
+        if mode == 'continous':
+            self.show_pointer = POINTER_SHOW
+            self.pointer_mode = POINTERMODE_CONTINEOUS
+        elif mode == 'manual':
+            self.show_pointer = POINTER_HIDE
+            self.pointer_mode = POINTERMODE_MANUAL
+        elif mode == 'none':
+            self.show_pointer = POINTER_HIDE
+            self.pointer_mode = POINTERMODE_DISABLED
+
+        # Set mouse pointer on/off, if windows are already mapped
+        if self.p_da_cur.get_window():
+            if self.pointer_mode == POINTERMODE_CONTINEOUS:
+                extras.Cursor.set_cursor(self.p_da_cur, 'invisible')
+            else:
+                extras.Cursor.set_cursor(self.p_da_cur, 'parent')
+
+            self.redraw_current_slide()
+
 
     def change_pointermode(self, widget):
         """ Callback for a radio item selection as pointer mode (continous, manual, disabled)
@@ -130,28 +157,11 @@ class Pointer(object):
         Args:
             widget (:class:`~Gtk.RadioMenuItem`): the selected radio item in the pointer type selection menu
         """
-        print( widget )
         if widget.get_active():
             assert(widget.get_name().startswith('pointermode_'))
             mode = widget.get_name()[len('pointermode_'):]
             self.config.set('presenter', 'pointer_mode', mode)
-
-            if mode == 'continous':
-                self.show_pointer = POINTER_SHOW
-                self.pointer_mode = POINTERMODE_CONTINEOUS
-                extras.Cursor.set_cursor(self.p_da_cur, 'invisible')
-
-            elif mode == 'manual':
-                self.show_pointer = POINTER_HIDE
-                self.pointer_mode = POINTERMODE_MANUAL
-                extras.Cursor.set_cursor(self.p_da_cur, 'parent')
-
-            elif mode == 'none':
-                self.show_pointer = POINTER_HIDE
-                self.pointer_mode = POINTERMODE_DISABLED
-                extras.Cursor.set_cursor(self.p_da_cur, 'parent')
-
-            self.redraw_current_slide()
+            self.activate_pointermode(mode)
 
 
     def render_pointer(self, cairo_context, ww, wh):
@@ -209,7 +219,6 @@ class Pointer(object):
         ctrl_pressed = event.get_state() & Gdk.ModifierType.CONTROL_MASK
 
         if ctrl_pressed and event.type == Gdk.EventType.BUTTON_PRESS:
-            print(widget)
             self.show_pointer = POINTER_SHOW
             extras.Cursor.set_cursor(widget, 'invisible')
 
