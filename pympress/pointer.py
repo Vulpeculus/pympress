@@ -62,7 +62,7 @@ class Pointer(object):
     #: A reference to the UI's :class:`~pympress.config.Config`, to update the pointer preference
     config = None
     #: :class:`~Gtk.Box` in the Presenter window, used to reliably set cursors.
-    p_central = None
+    p_da_cur = None
 
 
     #: callback, to be connected to :func:`~pympress.ui.UI.redraw_current_slide`
@@ -134,17 +134,17 @@ class Pointer(object):
             if mode == 'continous':
                 self.show_pointer = POINTER_SHOW
                 self.pointer_mode = POINTERMODE_CONTINEOUS
-                extras.Cursor.set_cursor(self.p_central, 'invisible')
+                extras.Cursor.set_cursor(self.p_da_cur, 'invisible')
 
             elif mode == 'manual':
                 self.show_pointer = POINTER_HIDE
                 self.pointer_mode = POINTERMODE_MANUAL
-                extras.Cursor.set_cursor(self.p_central, 'parent')
+                extras.Cursor.set_cursor(self.p_da_cur, 'parent')
 
             elif mode == 'none':
                 self.show_pointer = POINTER_HIDE
                 self.pointer_mode = POINTERMODE_DISABLED
-                extras.Cursor.set_cursor(self.p_central, 'parent')
+                extras.Cursor.set_cursor(self.p_da_cur, 'parent')
 
             self.redraw_current_slide()
 
