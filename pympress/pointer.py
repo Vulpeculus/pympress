@@ -51,6 +51,8 @@ class Pointer(object):
     pointer_pos = (.5, .5)
     #: `bool` indicating whether we should show the pointer
     show_pointer = POINTER_OFF
+    #: XstringX indicating if the pointer is switched on contiouesly
+    pointer_contineous = False
     #: A reference to the UI's :class:`~pympress.config.Config`, to update the pointer preference
     config = None
     #: :class:`~Gtk.Box` in the Presenter window, used to reliably set cursors.
@@ -126,14 +128,17 @@ class Pointer(object):
             mode = widget.get_name()[len('pointermode_'):]
             if mode == 'continous':
                 self.show_pointer = POINTER_SHOW
+                self.pointer_contineous = True
                 extras.Cursor.set_cursor(self.p_central, 'invisible')
 
             elif mode == 'manual':
                 self.show_pointer = POINTER_HIDE
+                self.pointer_contineous = False
                 extras.Cursor.set_cursor(self.p_central, 'parent')
 
             elif mode == 'none':
                 self.show_pointer = POINTER_OFF
+                self.pointer_contineous = False
                 extras.Cursor.set_cursor(self.p_central, 'parent')
 
             self.redraw_current_slide()
@@ -186,6 +191,9 @@ class Pointer(object):
             `bool`: whether the event was consumed
         """
         if self.show_pointer == POINTER_OFF:
+            return False
+
+        if self.pointer_contineous:
             return False
 
         ctrl_pressed = event.get_state() & Gdk.ModifierType.CONTROL_MASK
