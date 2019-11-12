@@ -84,6 +84,15 @@ class Pointer(object):
         self.redraw_current_slide = builder.get_callback_handler('redraw_current_slide')
 
         default_mode = config.get('presenter', 'pointer_mode')
+        default_color = 'pointer_' + config.get('presenter', 'pointer')
+
+        # Adapt setting from old configuration
+        if default_color == 'pointer_none':
+            default_color = 'pointer_red'
+            default_mode  = 'none'
+            self.config.set('presenter', 'pointer', 'red')
+            self.config.set('presenter', 'pointer_mode', 'none')
+
         self.activate_pointermode(default_mode)
 
         for radio_name in ['pointermode_continous', 'pointermode_manual', 'pointermode_none']:
@@ -92,7 +101,6 @@ class Pointer(object):
 
             radio.set_active(radio_name == 'pointermode_' + default_mode)
 
-        default_color = 'pointer_' + config.get('presenter', 'pointer')
         self.load_pointer(default_color)
 
         for radio_name in ['pointer_red', 'pointer_blue', 'pointer_green']:
@@ -129,7 +137,7 @@ class Pointer(object):
         """ Activate the pointer as given by mode
 
         Args:
-            mode (`str`): Name of the mode to activate (contineous|manual|disabled)
+            mode (`str`): Name of the mode to activate (contineous|manual|none)
         """
         # Set internal variables, unless called without mode (from ui, after windows have been mapped)
         if mode == 'continous':
@@ -155,7 +163,7 @@ class Pointer(object):
 
 
     def change_pointermode(self, widget):
-        """ Callback for a radio item selection as pointer mode (continous, manual, disabled)
+        """ Callback for a radio item selection as pointer mode (continous, manual, none)
 
         Args:
             widget (:class:`~Gtk.RadioMenuItem`): the selected radio item in the pointer type selection menu
