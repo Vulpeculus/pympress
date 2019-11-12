@@ -481,6 +481,7 @@ class Cursor(object):
         widget.get_window().set_cursor(cls._cursors[cursor_name])
 
 
+
 class Zoom(object):
     #: Whether we are displaying the interface to scribble on screen and the overlays containing said scribbles
     zoom_selecting = False

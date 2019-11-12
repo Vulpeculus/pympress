@@ -226,7 +226,7 @@
                                 <property name="use_underline">True</property>
                                 <property name="draw_as_radio">True</property>
                                 <property name="group">pointermode_continous</property>
-                                <signal name="toggled" handler="laser.change_pointer" swapped="no"/>
+                                <signal name="toggled" handler="laser.change_pointermode" swapped="no"/>
                               </object>
                             </child>
                             <child>
@@ -237,7 +237,7 @@
                                 <property name="use_underline">True</property>
                                 <property name="draw_as_radio">True</property>
                                 <property name="group">pointermode_continous</property>
-                                <signal name="toggled" handler="laser.change_pointer" swapped="no"/>
+                                <signal name="toggled" handler="laser.change_pointermode" swapped="no"/>
                               </object>
                             </child>
                             <child>
@@ -248,7 +248,7 @@
                                 <property name="use_underline">True</property>
                                 <property name="draw_as_radio">True</property>
                                 <property name="group">pointermode_continous</property>
-                                <signal name="toggled" handler="laser.change_pointer" swapped="no"/>
+                                <signal name="toggled" handler="laser.change_pointermode" swapped="no"/>
                               </object>
                             </child>
                             <child>

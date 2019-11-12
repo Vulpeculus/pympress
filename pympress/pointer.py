@@ -53,6 +53,9 @@ class Pointer(object):
     show_pointer = POINTER_OFF
     #: A reference to the UI's :class:`~pympress.config.Config`, to update the pointer preference
     config = None
+    #: :class:`~Gtk.Box` in the Presenter window, used to reliably set cursors.
+    p_central = None
+
 
     #: callback, to be connected to :func:`~pympress.ui.UI.redraw_current_slide`
     redraw_current_slide = lambda: None
@@ -67,6 +70,8 @@ class Pointer(object):
         super(Pointer, self).__init__()
         self.config = config
 
+        builder.load_widgets(self)
+
         self.redraw_current_slide = builder.get_callback_handler('redraw_current_slide')
 
         default = 'pointer_' + config.get('presenter', 'pointer')
@@ -77,6 +82,11 @@ class Pointer(object):
             radio.set_name(radio_name)
 
             radio.set_active(radio_name == default)
+
+        for radio_name in ['pointermode_continous', 'pointermode_manual', 'pointermode_none']:
+            radio = builder.get_object(radio_name)
+            radio.set_name(radio_name)
+
 
 
     def load_pointer(self, name):
@@ -102,6 +112,21 @@ class Pointer(object):
             assert(widget.get_name().startswith('pointer_'))
             self.load_pointer(widget.get_name())
             self.config.set('presenter', 'pointer', widget.get_name()[len('pointer_'):])
+
+
+    def change_pointermode(self, widget):
+        """ Callback for a radio item selection as pointer mode (continous, manual, disabled)
+
+        Args:
+            widget (:class:`~Gtk.RadioMenuItem`): the selected radio item in the pointer type selection menu
+        """
+        print( widget )
+        if widget.get_active():
+            assert(widget.get_name().startswith('pointermode_'))
+            if widget.get_name() == 'pointermode_continous':
+                self.show_pointer = POINTER_SHOW
+                extras.Cursor.set_cursor(self.p_central, cursor_name='invisible')
+                self.redraw_current_slide()
 
 
     def render_pointer(self, cairo_context, ww, wh):
@@ -156,7 +181,7 @@ class Pointer(object):
         ctrl_pressed = event.get_state() & Gdk.ModifierType.CONTROL_MASK
 
         if ctrl_pressed and event.type == Gdk.EventType.BUTTON_PRESS:
-            print('Pointer on')
+            print(widget)
             self.show_pointer = POINTER_SHOW
             extras.Cursor.set_cursor(widget, 'invisible')
 
@@ -164,7 +189,6 @@ class Pointer(object):
             return self.track_pointer(widget, event)
 
         elif self.show_pointer == POINTER_SHOW and event.type == Gdk.EventType.BUTTON_RELEASE:
-            print('Pointer off')
             self.show_pointer = POINTER_HIDE
             extras.Cursor.set_cursor(widget, 'parent')
             self.redraw_current_slide()
