@@ -36,12 +36,18 @@ from gi.repository import Gdk, GdkPixbuf
 from pympress import util, extras
 
 
-#: Pointer disabled, will not be drawn
-POINTER_OFF = -1
 #: Pointer enabled but hidden, will be drawn on ctrl + click
 POINTER_HIDE = 0
 #: Draw the pointer on the current slide
 POINTER_SHOW = 1
+
+#: Pointer switched on contineously
+POINTERMODE_CONTINEOUS = 1
+#: Pointer switched on only manual
+POINTERMODE_MANUAL = 0
+#: Pointer never switched on
+POINTERMODE_DISABLED = -1
+
 
 
 class Pointer(object):
@@ -50,9 +56,9 @@ class Pointer(object):
     #: `(float, float)` of position relative to slide, where the pointer should appear
     pointer_pos = (.5, .5)
     #: `bool` indicating whether we should show the pointer
-    show_pointer = POINTER_OFF
-    #: XstringX indicating if the pointer is switched on contiouesly
-    pointer_contineous = False
+    show_pointer = POINTER_HIDE
+    #: `bool` indicating the pointer mode (contineous, manual, disabled)
+    pointer_mode = POINTERMODE_MANUAL
     #: A reference to the UI's :class:`~pympress.config.Config`, to update the pointer preference
     config = None
     #: :class:`~Gtk.Box` in the Presenter window, used to reliably set cursors.
@@ -92,16 +98,15 @@ class Pointer(object):
 
 
     def load_pointer(self, name):
-        """ Perform the change of pointer using its name
+        """ Perform the change of pointer using its color name
 
         Args:
             name (`str`): Name of the pointer to load
         """
         if name in ['pointer_red', 'pointer_green', 'pointer_blue']:
-            self.show_pointer = POINTER_HIDE
             self.pointer = GdkPixbuf.Pixbuf.new_from_file(util.get_icon_path(name + '.png'))
         else:
-            self.show_pointer = POINTER_OFF
+            raise ValueError('Wrong color name')
 
 
     def change_pointer(self, widget):
@@ -128,17 +133,17 @@ class Pointer(object):
             mode = widget.get_name()[len('pointermode_'):]
             if mode == 'continous':
                 self.show_pointer = POINTER_SHOW
-                self.pointer_contineous = True
+                self.pointer_mode = POINTERMODE_CONTINEOUS
                 extras.Cursor.set_cursor(self.p_central, 'invisible')
 
             elif mode == 'manual':
                 self.show_pointer = POINTER_HIDE
-                self.pointer_contineous = False
+                self.pointer_mode = POINTERMODE_MANUAL
                 extras.Cursor.set_cursor(self.p_central, 'parent')
 
             elif mode == 'none':
-                self.show_pointer = POINTER_OFF
-                self.pointer_contineous = False
+                self.show_pointer = POINTER_HIDE
+                self.pointer_mode = POINTERMODE_DISABLED
                 extras.Cursor.set_cursor(self.p_central, 'parent')
 
             self.redraw_current_slide()
@@ -190,10 +195,10 @@ class Pointer(object):
         Returns:
             `bool`: whether the event was consumed
         """
-        if self.show_pointer == POINTER_OFF:
+        if self.pointer_mode == POINTERMODE_DISABLED:
             return False
 
-        if self.pointer_contineous:
+        if self.pointer_mode == POINTERMODE_CONTINEOUS:
             return False
 
         ctrl_pressed = event.get_state() & Gdk.ModifierType.CONTROL_MASK
