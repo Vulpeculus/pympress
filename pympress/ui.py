@@ -964,6 +964,8 @@ class UI(builder.Builder):
             self.close_file()
         elif command == 'open_file':
             self.pick_file()
+        elif command == 'toggle_pointermode':
+            self.laser.toggle_pointermode()
         else:
             if command:
                 logger.error('ERROR: missing command "{}" for {}{}{}{}'.format(command,

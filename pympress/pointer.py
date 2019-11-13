@@ -67,6 +67,10 @@ class Pointer(object):
     c_da     = None
     #: :class:`~Gtk.AspectFrame` Frame of the Contents window, used to reliably set cursors.
     c_frame  = None
+    #: `str` Remeber old pointermode in toggling
+    old_pointermode = None
+    #: :class:`~pympress.builder.Builder`): A builder from which to load widgets
+    builder = None
 
 
     #: callback, to be connected to :func:`~pympress.ui.UI.redraw_current_slide`
@@ -81,6 +85,7 @@ class Pointer(object):
         """
         super(Pointer, self).__init__()
         self.config = config
+        self.builder = builder
 
         builder.load_widgets(self)
 
@@ -186,6 +191,20 @@ class Pointer(object):
             mode = widget.get_name()[len('pointermode_'):]
             self.activate_pointermode(mode)
 
+
+    def toggle_pointermode(self):
+        """ callback for shortcut to switch on/of continuous pointer
+        """
+        if self.pointer_mode == POINTERMODE_CONTINUOUS:
+            mode = self.old_pointermode or 'manual'
+
+        else:
+            self.old_pointermode = self.pointer_mode
+            mode = 'continous'
+
+        self.activate_pointermode(mode)
+        self.builder.get_object('pointermode_'+mode).set_active(True)
+            
 
     def render_pointer(self, cairo_context, ww, wh):
         """ Draw the laser pointer on screen
