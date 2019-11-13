@@ -103,7 +103,7 @@ class Pointer(object):
 
         self.activate_pointermode(default_mode)
 
-        for radio_name in ['pointermode_continous', 'pointermode_manual', 'pointermode_none']:
+        for radio_name in ['pointermode_continuous', 'pointermode_manual', 'pointermode_none']:
             radio = builder.get_object(radio_name)
             radio.set_name(radio_name)
 
@@ -152,7 +152,7 @@ class Pointer(object):
                           or None if only mouse pointer should be hidden/shown
         """
         # Set internal variables, unless called without mode (from ui, after windows have been mapped)
-        if mode == 'continous':
+        if mode == 'continuous':
             self.show_pointer = POINTER_SHOW
             self.pointer_mode = POINTERMODE_CONTINUOUS
         elif mode == 'manual':
@@ -182,7 +182,7 @@ class Pointer(object):
 
 
     def change_pointermode(self, widget):
-        """ Callback for a radio item selection as pointer mode (continous, manual, none)
+        """ Callback for a radio item selection as pointer mode (continuous, manual, none)
 
         Args:
             widget (:class:`~Gtk.RadioMenuItem`): the selected radio item in the pointer type selection menu
@@ -201,7 +201,7 @@ class Pointer(object):
 
         else:
             self.old_pointermode = 'manual' if self.pointer_mode==POINTERMODE_MANUAL else 'none'
-            mode = 'continous'
+            mode = 'continuous'
 
         self.activate_pointermode(mode)
         self.builder.get_object('pointermode_'+mode).set_active(True)
