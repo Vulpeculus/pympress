@@ -173,6 +173,7 @@ class Pointer(object):
                 extras.Cursor.set_cursor(self.p_da_cur, 'parent')
                 extras.Cursor.set_cursor(self.c_frame, 'parent')
 
+            self.track_visibility()
             self.redraw_current_slide()
 
         # Save the mode in the configuration file
@@ -199,7 +200,7 @@ class Pointer(object):
             mode = self.old_pointermode or 'manual'
 
         else:
-            self.old_pointermode = self.pointer_mode
+            self.old_pointermode = 'manual' if self.pointer_mode==POINTERMODE_MANUAL else 'none'
             mode = 'continous'
 
         self.activate_pointermode(mode)
@@ -275,7 +276,7 @@ class Pointer(object):
         return True
 
 
-    def track_visibility(self, widget, event):
+    def track_visibility(self, widget=None, event=None):
         """ Activates pointer in continuous mode on startup
 
         Shows the laser pointer at startup only, if the mouse cursor
@@ -292,20 +293,23 @@ class Pointer(object):
             return False
 
         pointer_is_in_slide = False
-        for widget in [self.p_da_cur, self.c_da]:
-            ww, wh = widget.get_allocated_width(), widget.get_allocated_height()
+        for slide_widget in [self.p_da_cur, self.c_da]:
+            ww, wh = slide_widget.get_allocated_width(), slide_widget.get_allocated_height()
             if ww==1 and wh==1:
                 continue
-            pointer_coordinates = widget.get_window().get_pointer();
+            pointer_coordinates = slide_widget.get_window().get_pointer();
             if 0 < pointer_coordinates.x < ww and 0 < pointer_coordinates.y < wh:
                # Laser may stay activated
                pointer_is_in_slide = True
+               self.pointer_pos = (pointer_coordinates.x / ww, pointer_coordinates.y / wh)
                break;
 
         if not pointer_is_in_slide:
             # switch laser off, until mouse enters slide
             self.show_pointer = POINTER_HIDE
             self.redraw_current_slide()
+
+        return True
 
 
     def toggle_pointer(self, widget, event):
