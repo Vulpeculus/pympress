@@ -163,12 +163,6 @@ class Pointer(object):
                 extras.Cursor.set_cursor(self.c_frame, 'parent')
 
             self.redraw_current_slide()
-            # print(Gdk.get_default_root_window().get_pointer())
-            # print(self.p_da_cur.get_window().get_origin())
-            # print(self.p_da_cur.get_window().get_geometry())
-            # print(self.p_da_cur.get_window().get_pointer())
-            # print(self.p_da_cur.get_allocated_width(), self.p_da_cur.get_allocated_height())
-            # print(self.p_da_cur.get_window().get_frame_extents())
 
 
 
@@ -268,10 +262,12 @@ class Pointer(object):
             pointer_coordinates = widget.get_window().get_pointer();
             if (     pointer_coordinates.x > 0 and pointer_coordinates.x < ww
                  and pointer_coordinates.y > 0 and pointer_coordinates.y < wh):
-               # Switch laser on
+               # Laser may stay activated
                pointer_is_in_slide = True
+               break;
 
         if not pointer_is_in_slide:
+            # switch laser off, until mouse enters slide
             self.show_pointer = POINTER_HIDE
             self.redraw_current_slide()
 

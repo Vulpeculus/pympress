@@ -469,7 +469,6 @@ class Cursor(object):
         'crosshair': Gdk.Cursor.new_for_display(Gdk.Display.get_default(), Gdk.CursorType.CROSSHAIR),
         'invisible': Gdk.Cursor.new_for_display(Gdk.Display.get_default(), Gdk.CursorType.BLANK_CURSOR),
     }
-    count = 1
 
     @classmethod
     def set_cursor(cls, widget, cursor_name = 'parent'):
@@ -479,13 +478,7 @@ class Cursor(object):
             widget (:class:`~Gtk.Widget`): The widget triggering the cursor change, used to retrieve a Gdk.Window
             cursor_name (`str`): Name of the cursor to be set
         """
-        print(cursor_name, widget)
-        cls.count += 1
-        #if cls.count > 4:
-            #raise ValueError('No Way {}'.format(cls.count))
-
         widget.get_window().set_cursor(cls._cursors[cursor_name])
-
 
 
 class Zoom(object):
