@@ -297,8 +297,7 @@ class Pointer(object):
             if ww==1 and wh==1:
                 continue
             pointer_coordinates = widget.get_window().get_pointer();
-            if (     pointer_coordinates.x > 0 and pointer_coordinates.x < ww
-                 and pointer_coordinates.y > 0 and pointer_coordinates.y < wh):
+            if 0 < pointer_coordinates.x < ww and 0 < pointer_coordinates.y < wh:
                # Laser may stay activated
                pointer_is_in_slide = True
                break;
