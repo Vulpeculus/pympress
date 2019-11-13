@@ -139,8 +139,12 @@ class Pointer(object):
     def activate_pointermode(self, mode=None):
         """ Activate the pointer as given by mode
 
+        Depending on the given mode, shows or hides the laser pointer and the normal
+        mouse pointer
+
         Args:
-            mode (`str`): Name of the mode to activate (continuous|manual|none)
+            mode (`str`): Name of the mode to activate (continuous|manual|none),
+                          or None if only mouse pointer should be hidden/shown
         """
         # Set internal variables, unless called without mode (from ui, after windows have been mapped)
         if mode == 'continous':
@@ -152,6 +156,8 @@ class Pointer(object):
         elif mode == 'none':
             self.show_pointer = POINTER_HIDE
             self.pointer_mode = POINTERMODE_DISABLED
+        else:
+            pass
 
         # Set mouse pointer on/off, if windows are already mapped
         if self.p_da_cur.get_window():
@@ -164,6 +170,9 @@ class Pointer(object):
 
             self.redraw_current_slide()
 
+        # Save the mode in the configuration file
+        if mode != None:
+            self.config.set('presenter', 'pointer_mode', mode)
 
 
     def change_pointermode(self, widget):
@@ -175,7 +184,6 @@ class Pointer(object):
         if widget.get_active():
             assert(widget.get_name().startswith('pointermode_'))
             mode = widget.get_name()[len('pointermode_'):]
-            self.config.set('presenter', 'pointer_mode', mode)
             self.activate_pointermode(mode)
 
 
