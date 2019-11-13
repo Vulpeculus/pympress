@@ -1030,9 +1030,6 @@ class UI(builder.Builder):
         Returns:
             `bool`: whether the event was consumed
         """
-        if widget not in [self.c_da, self.p_da_cur]:
-            return False
-
         if self.laser.track_enter_leave(widget, event):
             return True
         else:

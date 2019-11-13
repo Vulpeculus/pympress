@@ -215,10 +215,12 @@ class Pointer(object):
             return False
 
     def track_enter_leave(self, widget, event):
-        """ Activates pointer in contuous mode on startup
+        """ Switches laser off/on in continuous mode on leave/enter slides
 
-        Shows the laser pointer at startup only, if the mouse pointer
-        is already in one of the current slides (presenter or contents)
+        In continuous mode, the laser pointer is switched off when the
+        mouse leaves the slide (otherwise the laser pointer "sticks" to the edge
+        of the slide).
+        Is is switched on again, when the mouse enters the slide again
 
         Args:
             widget (:class:`~Gtk.Widget`):  the widget which has received the event.
@@ -230,10 +232,15 @@ class Pointer(object):
         if self.pointer_mode != POINTERMODE_CONTINUOUS:
             return False
 
+        # Only handle enter/leave events on one of the current slides
+        if widget not in [self.c_da, self.p_da_cur]:
+            return False
+
         if event.type == Gdk.EventType.ENTER_NOTIFY:
             self.show_pointer = POINTER_SHOW
             extras.Cursor.set_cursor(self.p_da_cur, 'invisible')
             extras.Cursor.set_cursor(self.c_frame, 'invisible')
+
         elif event.type == Gdk.EventType.LEAVE_NOTIFY:
             self.show_pointer = POINTER_HIDE
 
@@ -242,7 +249,10 @@ class Pointer(object):
 
 
     def track_visibility(self, widget, event):
-        """ Switches pointer off/on in continuous mode on leave/enter slides
+        """ Activates pointer in continuous mode on startup
+
+        Shows the laser pointer at startup only, if the mouse cursor
+        is already in one of the current slides (presenter or contents)
 
         Args:
             widget (:class:`~Gtk.Widget`):  the widget which has received the event.
@@ -258,7 +268,7 @@ class Pointer(object):
         for widget in [self.p_da_cur, self.c_da]:
             ww, wh = widget.get_allocated_width(), widget.get_allocated_height()
             if ww==1 and wh==1:
-                return False
+                continue
             pointer_coordinates = widget.get_window().get_pointer();
             if (     pointer_coordinates.x > 0 and pointer_coordinates.x < ww
                  and pointer_coordinates.y > 0 and pointer_coordinates.y < wh):
@@ -270,7 +280,6 @@ class Pointer(object):
             # switch laser off, until mouse enters slide
             self.show_pointer = POINTER_HIDE
             self.redraw_current_slide()
-
 
 
     def toggle_pointer(self, widget, event):
